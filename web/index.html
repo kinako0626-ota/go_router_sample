@@ -34,7 +34,9 @@
 </head>
 <body>
     <!-- FirebaseConfig -->
-    <script src="firebase_config.js" type="application/javascript"></script>
+    <script src="firebase_config.js" type="application/javascript">
+      
+    </script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -105,6 +107,7 @@
       // Service workers not supported. Just drop the <script> tag.
       loadMainDartJs();
     }
+    firebase.initializeApp(firebaseConfig);
   </script>
 
 
