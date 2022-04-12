@@ -1,18 +1,24 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final signInViewModelProvider =
-    ChangeNotifierProvider((ref) => SignInViewModel());
+import '../../firebase/firebase_auth/firebase_auth_service.dart';
+
+final signInViewModelProvider = ChangeNotifierProvider(
+  (ref) => SignInViewModel(ref.watch(firebaseAuthServiceProvider)),
+);
 
 class SignInViewModel extends ChangeNotifier {
-  final auth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance;
+  SignInViewModel(this._firebaseAuthService);
+  final FirebaseAuthService _firebaseAuthService;
   final emailTextEditingController = TextEditingController();
   final passwordTextEditingController = TextEditingController();
-  final firstNameTextEditingController = TextEditingController();
-  final lastNameTextEditingController = TextEditingController();
 
-  Future<void> signIn(String email, String password) async {}
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async =>
+      _firebaseAuthService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 }

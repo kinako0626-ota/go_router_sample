@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app/firebase/firebase_auth/firebase_auth_service.dart';
 import 'app/pages/error_page.dart';
 import 'app/pages/sign_in/sign_in_page.dart';
 import 'app/pages/sign_up/sign_up_page.dart';
@@ -21,15 +21,15 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(firebaseAuthServiceProvider);
     final router = GoRouter(
       debugLogDiagnostics: kDebugMode,
-      refreshListenable:
-          GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
+      refreshListenable: GoRouterRefreshStream(auth.authStateStream),
       routes: [
         GoRoute(
           path: GoRouterPath.top,
@@ -37,6 +37,13 @@ class MyApp extends StatelessWidget {
             key: state.pageKey,
             child: const TopPage(),
           ),
+          redirect: (state) {
+            /// 会員登録していない状態でアクセスしたらサインイン画面へ遷移
+            if (auth.currentUser == null) {
+              return GoRouterPath.signIn;
+            }
+            return null;
+          },
         ),
         GoRoute(
           path: GoRouterPath.signIn,
@@ -44,6 +51,12 @@ class MyApp extends StatelessWidget {
             key: state.pageKey,
             child: const SignInPage(),
           ),
+          redirect: (state) {
+            if (auth.currentUser != null) {
+              return GoRouterPath.top;
+            }
+            return null;
+          },
         ),
         GoRoute(
           path: GoRouterPath.signUp,
@@ -51,6 +64,12 @@ class MyApp extends StatelessWidget {
             key: state.pageKey,
             child: const SignUp(),
           ),
+          redirect: (state) {
+            if (auth.currentUser != null) {
+              return GoRouterPath.top;
+            }
+            return null;
+          },
         ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(
