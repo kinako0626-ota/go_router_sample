@@ -31,6 +31,8 @@ dev_dependencies:
   freezed: ^1.1.1
   json_serializable: ^6.1.5
   source_gen: ^1.2.1
+  alchemist: ^0.3.2
+  mockito: ^5.1.0
 
 
 flutter:
